@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "node ./bin/www",
+    "server": "nodemon ./bin/www --exec babel-node",
     "client": "node start-client.js",
     "do-install": "npm install && node install-client.js"
   },
@@ -18,6 +18,10 @@
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
-    "concurrently": "^3.5.0"
+    "babel-cli": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babel-preset-stage-2": "^6.24.1",
+    "concurrently": "^3.5.0",
+    "nodemon": "^1.12.1"
   }
 }
