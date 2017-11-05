@@ -5,7 +5,8 @@
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "node ./bin/www",
-    "client": "node start-client.js"
+    "client": "node start-client.js",
+    "do-install": "npm install && node install-client.js"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
