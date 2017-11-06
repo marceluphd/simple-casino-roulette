@@ -36,5 +36,18 @@ describe('Bet', function() {
       expect(newBet).to.be.null;
       expect(errors).to.have.length(1);
     });
+
+    it('should not create bet when amount is out of range', async () => {
+      const { roundNo: currentRoundNo } = await db.startNextRound();
+      const invalidAmount = 200;
+      const {data: newBet, errors} = await db.createBet(
+        currentRoundNo,
+        20,
+        invalidAmount
+      );
+
+      expect(newBet).to.be.null;
+      expect(errors).to.have.length(1);
+    });
   });
 });
