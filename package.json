@@ -3,10 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "start": "NODE_ENV=development concurrently \"npm run server\" \"npm run client\"",
     "server": "nodemon ./bin/www --exec babel-node",
     "client": "node start-client.js",
-    "do-install": "npm install && node install-client.js"
+    "do-install": "npm install && node install-client.js",
+    "test": "NODE_ENV=test mocha --require babel-register --require babel-polyfill --recursive"
   },
   "dependencies": {
     "body-parser": "~1.18.2",
@@ -14,14 +15,22 @@
     "debug": "~2.6.9",
     "express": "~4.15.5",
     "jade": "~1.11.0",
+    "mongodb": "^2.2.33",
     "morgan": "~1.9.0",
     "serve-favicon": "~2.4.5"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.6.1",
-    "babel-preset-stage-2": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "babel-register": "^6.26.0",
+    "chai": "^4.1.2",
     "concurrently": "^3.5.0",
+    "lodash": "^4.17.4",
+    "mocha": "^4.0.1",
+    "moment": "^2.19.1",
     "nodemon": "^1.12.1"
   }
 }

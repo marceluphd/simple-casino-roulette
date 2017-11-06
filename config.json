@@ -1,0 +1,16 @@
+{
+  "test": {
+    "roulette": {
+      "mongodb": {
+        "url": "mongodb://localhost/rouletteTest"
+      }
+    }
+  },
+  "development": {
+    "roulette": {
+      "mongodb": {
+        "url": "mongodb://localhost/roulette"
+      }
+    }
+  }
+}
