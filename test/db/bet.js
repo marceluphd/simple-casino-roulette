@@ -16,10 +16,12 @@ describe('Bet', function() {
       expect(errors).to.be.null;
     });
 
-    it('should not create bet when given round is not the active one', async () => {
+    it('should not create bet when given round is not the active one',
+        async () => {
       const previousRound = await db.startNextRound();
       const currentRound = await db.startNextRound();
-      const {data: newBet, errors} = await db.createBet(previousRound.roundNo, 7, 10);
+      const {data: newBet, errors} =
+          await db.createBet(previousRound.roundNo, 7, 10);
       expect(newBet).to.be.null;
       expect(errors).to.have.length(1);
     });
@@ -56,12 +58,14 @@ describe('Bet', function() {
 
       // Place 10 bets in the first round and exhaust starting balance 1000.
       for (let i = 0; i < 10; i++) {
-        const {data: newBet, errors} = await db.createBet(currentRoundNo, i, 100);
+        const {data: newBet, errors} =
+            await db.createBet(currentRoundNo, i, 100);
         expect(newBet).not.to.be.null;
         expect(errors).to.be.null;
       }
 
-      const {data: newBet, errors} = await db.createBet(currentRoundNo, 20, 100);
+      const {data: newBet, errors} =
+        await db.createBet(currentRoundNo, 20, 100);
       expect(newBet).to.be.null;
       expect(errors).to.have.length(1);
     });

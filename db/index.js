@@ -17,7 +17,8 @@ let currentBalance = STARTING_BALANCE;
 export async function connectToMongoDb() {
   try {
     if (!mongoDbConnection) {
-      mongoDbConnection = await MongoClient.connect(config.roulette.mongodb.url);
+      mongoDbConnection =
+          await MongoClient.connect(config.roulette.mongodb.url);
       console.log('Connected to MongoDB.');
       round = new Round(mongoDbConnection);
       bet = new Bet(mongoDbConnection);

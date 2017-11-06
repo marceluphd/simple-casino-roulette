@@ -30,7 +30,13 @@ export default class Bet {
 
     const result = {data: null, errors: null};
 
-    const errors = await this.checkValidity(currentRound, currentBalance, roundNo, number, amount);
+    const errors = await this.checkValidity(
+      currentRound,
+      currentBalance,
+      roundNo,
+      number,
+      amount
+    );
     if (errors.length) {
       result.errors = errors;
     } else {
@@ -42,7 +48,9 @@ export default class Bet {
         success: false, // We'll update success with true if a user wins
       };
 
-      const opResult = await this.db.collection(this.BETS_COLLECTION_NAME).insertOne(bet);
+      const opResult = await this.db
+        .collection(this.BETS_COLLECTION_NAME)
+        .insertOne(bet);
       if (opResult.insertedCount === 1) {
         result.data = bet;
       } else {
