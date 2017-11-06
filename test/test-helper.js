@@ -9,5 +9,4 @@ before(async () => {
 after(async () => {
   await db.getMongoDbConnection().dropDatabase(TEST_DB);
   await db.getMongoDbConnection().close(true);
-  db.closeGame();
 });

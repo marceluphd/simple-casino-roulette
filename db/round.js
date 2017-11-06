@@ -19,7 +19,7 @@ export default class Round {
     const nextRound = {
       roundNo,
       startTime: currentTime.toDate(),
-      endTime: currentTime.add(30, 's').toDate(),
+      endTime: currentTime.add(this.ROUND_DURATION, 'ms').toDate(),
     };
 
     const result = await this.db.collection('rounds').insertOne(nextRound);

@@ -34,6 +34,9 @@ export async function initialize() {
   round = new Round(db);
   bet = new Bet(db);
   await startNextRound();
+}
+
+export function startTimerForCurrentRound() {
   timerIdForRound = setTimeout(async () => {
     await finishRoundAndStartNew();
   }, round.ROUND_DURATION);
@@ -96,11 +99,8 @@ export async function finishRoundAndStartNew() {
     timerIdForRound = setTimeout(async () => {
       await finishRoundAndStartNew();
     }, round.ROUND_DURATION);
+
   } catch (err) {
     console.log(err);
   }
-}
-
-export function closeGame() {
-  clearTimeout(timerIdForRound);
 }

@@ -8,6 +8,7 @@ var app = require('../app');
 var debug = require('debug')('simple-casino-roulette:server');
 var http = require('http');
 var initialize = require('../db').initialize;
+var startTimerForCurrentRound = require('../db').startTimerForCurrentRound;
 
 /**
  * Get port from environment and store in Express.
@@ -27,6 +28,7 @@ var server = http.createServer(app);
  */
 
 initialize().then(function () {
+  startTimerForCurrentRound();
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
