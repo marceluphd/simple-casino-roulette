@@ -13,7 +13,14 @@ describe('Bet', function() {
         success: false,
       });
       expect(newBet).to.have.property('time');
+      expect(newBet).to.have.property('_id');
       expect(errors).to.be.null;
+    });
+
+    it('bet created should have ID', async () => {
+      const { roundNo: currentRoundNo } = await db.startNextRound();
+      const {data: newBet} = await db.createBet(currentRoundNo, 7, 10);
+      expect(newBet).to.have.property('_id');
     });
 
     it('should not create bet when given round is not the active one',
