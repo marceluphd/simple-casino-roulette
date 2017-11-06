@@ -1,8 +1,9 @@
-import * as db from '../db';
+import * as game from '../game';
+import * as db from '../game/db';
 const TEST_DB = 'rouletteTest';
 
 before(async () => {
-  await db.initialize();
+  await game.initialize();
   await db.getMongoDbConnection().dropDatabase(TEST_DB);
 });
 

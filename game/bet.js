@@ -114,7 +114,7 @@ export default class Bet {
       .toArray();
   }
 
-  async evaluateAllBets(roundNo, startTime, endTime, winningNumber) {
+  async evaluateAllBets(roundNo, startTime, endTime, winningNumber, balance) {
     const collection = this.db.collection(this.BETS_COLLECTION_NAME);
     const cursor = collection.find({
       roundNo,
@@ -126,14 +126,37 @@ export default class Bet {
       if (bet.number === winningNumber) {
         bet.success = true;
         bet.payout = this.MAX_NUMBER * bet.amount;
+        balance += bet.payout - bet.amount;
       } else {
         bet.success = false;
         bet.payout = - bet.amount;
+        balance -= bet.amount;
       }
 
       await collection.replaceOne({_id: bet._id}, bet);
 
       bet = await cursor.next();
     }
+
+    return balance;
+  }
+
+  async readWinningBets(roundNo, startTime, endTime) {
+    return await this.db.collection(this.BETS_COLLECTION_NAME)
+      .find({
+      roundNo,
+      time: { $gte: startTime, $lte: endTime },
+      success: true,
+    }).toArray();
+  }
+
+
+  async readLostBets(roundNo, startTime, endTime) {
+    return await this.db.collection(this.BETS_COLLECTION_NAME)
+      .find({
+        roundNo,
+        time: { $gte: startTime, $lte: endTime },
+        success: false,
+      }).toArray();
   }
 }

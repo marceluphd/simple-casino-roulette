@@ -1,11 +1,9 @@
-import { MongoClient } from 'mongodb';
+import { connectToMongoDb } from './db';
 import Round from './round';
 import Bet from './bet';
 
-const config = require('../config.json')[process.env.NODE_ENV];
 const STARTING_BALANCE = 1000;
 
-let mongoDbConnection = null;
 let round = null;
 let bet = null;
 let timerIdForRound = null;
@@ -14,20 +12,6 @@ let timerIdForRound = null;
 // 1) one player only (for now)
 // 2) If program crashes, the player starts with starting balance again.
 let currentBalance = STARTING_BALANCE;
-
-export async function connectToMongoDb() {
-  try {
-    if (!mongoDbConnection) {
-      mongoDbConnection =
-          await MongoClient.connect(config.roulette.mongodb.url);
-      console.log('Connected to MongoDB.');
-    }
-  } catch (err) {
-    console.log(err);
-  }
-
-  return mongoDbConnection;
-}
 
 export async function initialize() {
   const db = await connectToMongoDb();
@@ -40,10 +24,6 @@ export function startTimerForCurrentRound() {
   timerIdForRound = setTimeout(async () => {
     await finishRoundAndStartNew();
   }, round.ROUND_DURATION);
-}
-
-export function getMongoDbConnection() {
-  return mongoDbConnection;
 }
 
 export async function createBet(roundNo, number, amount) {
@@ -77,12 +57,22 @@ export async function startNextRound() {
 // Exposed for convenient unit test.
 export async function finishCurrentRound(winningNumber) {
   const { roundNo, startTime, endTime } = await round.getCurrentRound();
-  await bet.evaluateAllBets(
+  currentBalance = await bet.evaluateAllBets(
     roundNo,
     startTime,
     endTime,
-    winningNumber
+    winningNumber,
+    currentBalance
   );
+}
+
+export function getCurrentBalance() {
+  return currentBalance;
+}
+
+// for unit test convenience
+export function resetBalance() {
+  currentBalance = STARTING_BALANCE;
 }
 
 function chooseWinningNumber() {
@@ -103,4 +93,14 @@ export async function finishRoundAndStartNew() {
   } catch (err) {
     console.log(err);
   }
+}
+
+// for unit test convenience
+export async function getWinningBets(roundNo, startTime, endTime) {
+  return await bet.readWinningBets(roundNo, startTime, endTime);
+}
+
+// for unit test convenience
+export async function getLostBets(roundNo, startTime, endTime) {
+  return await bet.readLostBets(roundNo, startTime, endTime);
 }
