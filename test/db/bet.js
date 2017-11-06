@@ -54,9 +54,11 @@ describe('Bet', function() {
         + 'so far for the current round exceeds current balance', async () => {
       const { roundNo: currentRoundNo } = await db.startNextRound();
 
-      // Place 10 bets in the first round and exhaust starting balance.
+      // Place 10 bets in the first round and exhaust starting balance 1000.
       for (let i = 0; i < 10; i++) {
-        await db.createBet(currentRoundNo, i, 100);
+        const {data: newBet, errors} = await db.createBet(currentRoundNo, i, 100);
+        expect(newBet).not.to.be.null;
+        expect(errors).to.be.null;
       }
 
       const {data: newBet, errors} = await db.createBet(currentRoundNo, 20, 100);

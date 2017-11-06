@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export default class Bet {
 
   constructor(db) {
@@ -34,7 +36,7 @@ export default class Bet {
     } else {
       const bet = {
         roundNo,
-        time: Date.now(),
+        time: moment().toDate(),
         number,
         amount,
         success: false, // We'll update success with true if a user wins

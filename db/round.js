@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export default class Round {
 
   constructor(db) {
@@ -11,11 +13,13 @@ export default class Round {
 
   async createNextRound() {
     const roundNo = this.currentRound ? this.currentRound.roundNo + 1 : 1;
-    const startTime = Date.now();
+
+    // Get timestamp in UTC to avoid edge case of daylight saving time.
+    const currentTime = moment();
     const nextRound = {
       roundNo,
-      startTime,
-      endTime: startTime + this.ROUND_DURATION,
+      startTime: currentTime.toDate(),
+      endTime: currentTime.add(30, 's').toDate(),
     };
 
     const result = await this.db.collection('rounds').insertOne(nextRound);
