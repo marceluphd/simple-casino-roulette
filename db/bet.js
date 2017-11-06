@@ -38,6 +38,9 @@ export default class Bet {
     if (currentRound.roundNo !== roundNo) {
       errors.push('Bet placed is not for the active round.');
     }
+    if (number < 0 || number > 36) {
+      errors.push('Number chosen must be between 0 and 36 inclusive.')
+    }
 
     return errors;
   }

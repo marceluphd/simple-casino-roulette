@@ -4,7 +4,8 @@ import * as db from '../../db';
 describe('Bet', function() {
   describe('#create()', async () => {
     it('should return a valid bet when inputs are valid', async () => {
-      const {data: newBet, errors} = await db.createBet(1, 7, 10);
+      const { roundNo: currentRoundNo } = await db.startNextRound();
+      const {data: newBet, errors} = await db.createBet(currentRoundNo, 7, 10);
       expect(newBet).to.include({
         roundNo: 1,
         number: 7,
@@ -19,6 +20,19 @@ describe('Bet', function() {
       const previousRound = await db.startNextRound();
       const currentRound = await db.startNextRound();
       const {data: newBet, errors} = await db.createBet(previousRound.roundNo, 7, 10);
+      expect(newBet).to.be.null;
+      expect(errors).to.have.length(1);
+    });
+
+    it('should not create bet when chosen number is out of range', async () => {
+      const { roundNo: currentRoundNo } = await db.startNextRound();
+      const invalidNumber = 40;
+      const {data: newBet, errors} = await db.createBet(
+        currentRoundNo,
+        invalidNumber,
+        10
+      );
+
       expect(newBet).to.be.null;
       expect(errors).to.have.length(1);
     });
