@@ -3,10 +3,16 @@ import Round from './round';
 import Bet from './bet';
 
 const config = require('../config.json')[process.env.NODE_ENV];
+const STARTING_BALANCE = 1000;
 
 let mongoDbConnection = null;
 let round = null;
 let bet = null;
+
+// Balance stored in-memory because I've made assumptions:
+// 1) one player only (for now)
+// 2) If program crashes, the player starts with starting balance again.
+let currentBalance = STARTING_BALANCE;
 
 export async function connectToMongoDb() {
   try {
@@ -31,6 +37,7 @@ export async function createBet(roundNo, number, amount) {
   try {
     return await bet.create(
       await round.getCurrentRound(),
+      currentBalance,
       roundNo,
       number,
       amount

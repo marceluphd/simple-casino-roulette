@@ -3,7 +3,7 @@ import * as db from '../../db';
 
 describe('Bet', function() {
   describe('#create()', async () => {
-    it('should return a valid bet when inputs are valid', async () => {
+    it('should create bet when all inputs are valid', async () => {
       const { roundNo: currentRoundNo } = await db.startNextRound();
       const {data: newBet, errors} = await db.createBet(currentRoundNo, 7, 10);
       expect(newBet).to.include({
@@ -46,6 +46,20 @@ describe('Bet', function() {
         invalidAmount
       );
 
+      expect(newBet).to.be.null;
+      expect(errors).to.have.length(1);
+    });
+
+    it('should not create bet when amount together with bets placed'
+        + 'so far for the current round exceeds current balance', async () => {
+      const { roundNo: currentRoundNo } = await db.startNextRound();
+
+      // Place 10 bets in the first round and exhaust starting balance.
+      for (let i = 0; i < 10; i++) {
+        await db.createBet(currentRoundNo, i, 100);
+      }
+
+      const {data: newBet, errors} = await db.createBet(currentRoundNo, 20, 100);
       expect(newBet).to.be.null;
       expect(errors).to.have.length(1);
     });
