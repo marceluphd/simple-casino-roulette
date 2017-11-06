@@ -159,4 +159,17 @@ export default class Bet {
         success: false,
       }).toArray();
   }
+
+  async readAllBets() {
+    // For massive number of bets, this won't do because having all bets in
+    // memory will not be practical after a certain point. We'll need
+    // cursor based pagination.
+    // Should not use skip() as it'll be very expensive for large dataset.
+    // Should use $gt with current page's last document ID.
+    // For now, just KISS.
+    return await this.db
+      .collection(this.BETS_COLLECTION_NAME)
+      .find({})
+      .toArray();
+  }
 }

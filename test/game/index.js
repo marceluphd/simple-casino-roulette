@@ -1,5 +1,6 @@
 const expect = require("chai").expect;
 import * as game from '../../game';
+import * as db from '../../game/db';
 
 describe('game', function() {
   describe('#createBet()', async () => {
@@ -102,7 +103,7 @@ describe('game', function() {
     });
 
     it('should update player balance', async () => {
-      const { roundNo: currentRoundNo, startTime, endTime } = await game.startNextRound();
+      const { roundNo: currentRoundNo } = await game.startNextRound();
       game.resetBalance();
 
       const winningNumber = 16;
@@ -112,6 +113,23 @@ describe('game', function() {
       await game.finishCurrentRound(winningNumber);
 
       expect(game.getCurrentBalance()).to.equal(1680);
+    });
+  });
+
+  describe('#getAllBets()', async () => {
+    it('should get all bets', async () => {
+      await db.getMongoDbConnection().collection('bets').deleteMany({});
+      const { roundNo: round1 } = await game.startNextRound();
+
+      await game.createBet(round1, 1, 10);
+      await game.finishCurrentRound(20);
+
+      const { roundNo: round2 } = await game.startNextRound();
+      await game.createBet(round2, 2, 20);
+      await game.createBet(round2, 3, 30);
+
+      const allBets = await game.getAllBets();
+      expect(allBets).to.have.length(3);
     });
   });
 });
