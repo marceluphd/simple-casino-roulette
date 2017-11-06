@@ -7,10 +7,11 @@ describe('DB', function() {
       const { roundNo: currentRoundNo } = await db.startNextRound();
       const {data: newBet, errors} = await db.createBet(currentRoundNo, 7, 10);
       expect(newBet).to.include({
-        roundNo: 1,
+        roundNo: currentRoundNo,
         number: 7,
         amount: 10,
-        success: false,
+        success: null,
+        payout: null,
       });
       expect(newBet).to.have.property('time');
       expect(newBet).to.have.property('_id');
@@ -75,6 +76,36 @@ describe('DB', function() {
         await db.createBet(currentRoundNo, 20, 100);
       expect(newBet).to.be.null;
       expect(errors).to.have.length(1);
+    });
+  });
+
+  describe('#finishCurrentRound()', async () => {
+    it('should update winning and losing bets', async () => {
+      const { roundNo: currentRoundNo, startTime, endTime } = await db.startNextRound();
+
+      const winningNumber = 16;
+      await db.createBet(currentRoundNo, winningNumber, 10);
+      await db.createBet(currentRoundNo, 9, 20);
+      await db.createBet(currentRoundNo, winningNumber, 10);
+
+      await db.finishCurrentRound(winningNumber);
+      const betsCollection = db.getMongoDbConnection().collection('bets');
+      const winningBets = await betsCollection.find({
+          roundNo: currentRoundNo,
+          time: { $gte: startTime, $lte: endTime },
+          success: true,
+      }).toArray();
+      expect(winningBets).to.have.length(2);
+      expect(winningBets[0].payout).to.equal(360);
+      expect(winningBets[1].payout).to.equal(360);
+
+      const lostBets = await betsCollection.find({
+        roundNo: currentRoundNo,
+        time: { $gte: startTime, $lte: endTime },
+        success: false,
+      }).toArray();
+      expect(lostBets).to.have.length(1);
+      expect(lostBets[0].payout).to.equal(-20);
     });
   });
 });

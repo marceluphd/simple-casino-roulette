@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('simple-casino-roulette:server');
 var http = require('http');
-var connectToMongoDb = require('../db').connectToMongoDb;
+var initialize = require('../db').initialize;
 
 /**
  * Get port from environment and store in Express.
@@ -26,7 +26,7 @@ var server = http.createServer(app);
  * Listen on provided port, on all network interfaces.
  */
 
-connectToMongoDb().then(function (db) {
+initialize().then(function () {
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);

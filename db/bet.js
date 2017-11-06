@@ -45,7 +45,8 @@ export default class Bet {
         time: moment().toDate(),
         number,
         amount,
-        success: false, // We'll update success with true if a user wins
+        success: null, // Update success and payout after round finishes
+        payout: null,
       };
 
       const opResult = await this.db
@@ -85,7 +86,7 @@ export default class Bet {
 
     // Player's current balance should cover past bets for current round
     // as well as this new bet.
-    const betsPlacedSoFar = await this.readAllBets(
+    const betsPlacedSoFar = await this.readAllBetAmounts(
       currentRound.roundNo,
       currentRound.startTime,
       currentRound.endTime
@@ -100,7 +101,7 @@ export default class Bet {
     return errors;
   }
 
-  async readAllBets(roundNo, startTime, endTime) {
+  async readAllBetAmounts(roundNo, startTime, endTime) {
     // Assumption (toArray): The bets placed in a round can be stored in memory.
     // Good for now, but not a good idea if we've got a million or several
     // hundred thousands players - all placing bets.
@@ -109,7 +110,30 @@ export default class Bet {
       .find({
         roundNo,
         time: { $gte: startTime, $lte: endTime }
-      })
+      }, {amount: 1})
       .toArray();
+  }
+
+  async evaluateAllBets(roundNo, startTime, endTime, winningNumber) {
+    const collection = this.db.collection(this.BETS_COLLECTION_NAME);
+    const cursor = collection.find({
+      roundNo,
+      time: { $gte: startTime, $lte: endTime },
+    }).addCursorFlag('noCursorTimeout', true);
+
+    let bet = await cursor.next();
+    while (bet !== null) {
+      if (bet.number === winningNumber) {
+        bet.success = true;
+        bet.payout = this.MAX_NUMBER * bet.amount;
+      } else {
+        bet.success = false;
+        bet.payout = - bet.amount;
+      }
+
+      await collection.replaceOne({_id: bet._id}, bet);
+
+      bet = await cursor.next();
+    }
   }
 }
