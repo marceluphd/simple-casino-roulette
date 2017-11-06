@@ -34,6 +34,11 @@ export default class Bet {
   }
 
   checkValidity(currentRound, roundNo, number, amount) {
-    return [];
+    const errors = [];
+    if (currentRound.roundNo !== roundNo) {
+      errors.push('Bet placed is not for the active round.');
+    }
+
+    return errors;
   }
 }

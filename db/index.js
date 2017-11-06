@@ -39,3 +39,15 @@ export async function createBet(roundNo, number, amount) {
     console.error(err);
   }
 }
+
+// Exposed for convenient unit test
+export async function startNextRound() {
+  let nextRound = null;
+  try {
+    nextRound = await round.createNextRound();
+  } catch (err) {
+    console.error(err);
+  }
+
+  return nextRound;
+}

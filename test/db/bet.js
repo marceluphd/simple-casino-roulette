@@ -14,5 +14,13 @@ describe('Bet', function() {
       expect(newBet).to.have.property('time');
       expect(errors).to.be.null;
     });
+
+    it('should not create bet when given round is not the active one', async () => {
+      const previousRound = await db.startNextRound();
+      const currentRound = await db.startNextRound();
+      const {data: newBet, errors} = await db.createBet(previousRound.roundNo, 7, 10);
+      expect(newBet).to.be.null;
+      expect(errors).to.have.length(1);
+    });
   });
 });
