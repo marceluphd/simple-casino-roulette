@@ -104,3 +104,14 @@ export async function getWinningBets(roundNo, startTime, endTime) {
 export async function getLostBets(roundNo, startTime, endTime) {
   return await bet.readLostBets(roundNo, startTime, endTime);
 }
+
+export async function getAllBets() {
+  let result = null;
+  try {
+    result = await bet.readAllBets();
+  } catch (err) {
+    console.error(err);
+  }
+
+  return result;
+}
