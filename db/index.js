@@ -35,8 +35,9 @@ export function getMongoDbConnection() {
 }
 
 export async function createBet(roundNo, number, amount) {
+  let result = null;
   try {
-    return await bet.create(
+    result = await bet.create(
       await round.getCurrentRound(),
       currentBalance,
       roundNo,
@@ -46,6 +47,8 @@ export async function createBet(roundNo, number, amount) {
   } catch (err) {
     console.error(err);
   }
+
+  return result;
 }
 
 // Exposed for convenient unit test

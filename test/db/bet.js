@@ -1,8 +1,8 @@
 const expect = require("chai").expect;
 import * as db from '../../db';
 
-describe('Bet', function() {
-  describe('#create()', async () => {
+describe('DB', function() {
+  describe('#createBet()', async () => {
     it('should create bet when all inputs are valid', async () => {
       const { roundNo: currentRoundNo } = await db.startNextRound();
       const {data: newBet, errors} = await db.createBet(currentRoundNo, 7, 10);
